@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\ContactRequest;
 use App\Models\Contact;
 use App\Http\Requests\LoginRequest;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ContactController extends Controller
 {
@@ -64,4 +65,65 @@ class ContactController extends Controller
         'email' => 'ログイン情報が正しくありません。',
     ]);
 }
+
+public function export()
+{
+    $contacts = Contact::all(); // ← 今は全件
+
+    $response = new StreamedResponse(function () use ($contacts) {
+        $handle = fopen('php://output', 'w');
+
+        // 文字化け対策（Excel用）
+        fwrite($handle, "\xEF\xBB\xBF");
+
+        // ヘッダー行
+        fputcsv($handle, [
+            'お名前',
+            '性別',
+            'メールアドレス',
+            'お問い合わせの種類'
+        ]);
+
+        foreach ($contacts as $contact) {
+            fputcsv($handle, [
+                $contact->last_name . ' ' . $contact->first_name,
+                $this->genderLabel($contact->gender),
+                $contact->email,
+                $this->contactTypeLabel($contact->contact_type),
+            ]);
+        }
+
+        fclose($handle);
+    });
+
+    $response->headers->set('Content-Type', 'text/csv');
+    $response->headers->set(
+        'Content-Disposition',
+        'attachment; filename="contacts.csv"'
+    );
+
+    return $response;
+}
+
+private function genderLabel($gender)
+{
+    return match ($gender) {
+        1 => '男性',
+        2 => '女性',
+        default => 'その他',
+    };
+}
+
+private function contactTypeLabel($type)
+{
+    return match ($type) {
+        1 => '商品のお届けについて',
+        2 => '商品の交換について',
+        3 => '商品トラブル',
+        4 => 'ショップへのお問い合わせ',
+        5 => 'その他',
+        default => '',
+    };
+}
+
 }
