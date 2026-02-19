@@ -32,4 +32,15 @@ public function getContactTypeLabelAttribute()
             default => '未選択',
         };
     }
+
+public function getGenderLabelAttribute()
+    {
+        return match ($this->gender) {
+            1 => '男性',
+            2 => '女性',
+            3 => 'その他',
+            default => '不明',
+        };
+    }
+
 }

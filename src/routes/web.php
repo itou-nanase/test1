@@ -25,5 +25,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/contacts', [AdminContactController::class, 'index'])
         ->name('admin.contacts.index');
 });
-Route::get('/admin/contacts/export', [ContactController::class, 'export'])
+Route::get('/admin/contacts/export', [AdminContactController::class, 'export'])
     ->name('admin.contacts.export');
+// routes/web.php
+Route::delete('/admin/contacts/{id}', [AdminContactController::class, 'destroy'])
+    ->name('admin.contacts.destroy');
