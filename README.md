@@ -33,26 +33,34 @@ Docker
 ＃ER図
 ```mermaid
 erDiagram
-    USERS {
+Users ||--o{ Categories : "has many"
+Contacts ||--o{ Categories : "has many"
+   Contacts {
         bigint id PK
-        string name
-        string email
-        string password
+        varchar last_name
+        varchar first_name
+        int gender
+        varchar email
+        varchar tel
+        varchar address
+        varchar building
+        int contact_type
+        text detail
+        timestamp created_at
+        timestamp updated_at
+    }
+    Users {
+        bigint id PK
+        varchar name
+        varchar email
+        varchar password
         timestamp created_at
         timestamp updated_at
     }
 
-    CONTACTS {
+   Categries{
         bigint id PK
-        string last_name
-        string first_name
-        int gender
-        string email
-        string tel
-        string address
-        string building
-        int contact_type
-        text content
+        varchar content
         timestamp created_at
         timestamp updated_at
     }
