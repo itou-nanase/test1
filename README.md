@@ -58,7 +58,7 @@ Contacts ||--o{ Categories : "has many"
         timestamp updated_at
     }
 
-   Categries{
+   Categories{
         bigint id PK
         varchar content
         timestamp created_at
